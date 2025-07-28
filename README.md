@@ -7,7 +7,7 @@ et **DeepFace** pour identifier les visages dans les zones détectées.
 ## Fonctionnalités
 
 - Détection de personnes via webcam avec YOLOv8  
-- Reconnaissance faciale avec DeepFace + modèle 'Facenet'
+- Reconnaissance faciale avec DeepFace + modèle 'Facenet' (distance = 0.1299)
 - Affichage du prénom si une correspondance est trouvée dans la base d’images  
 - Affichage "Inconnu" ou "Non détecté" si aucune correspondance n’est trouvée  
 - Accélération GPU (CUDA) pour des performances fluides  
