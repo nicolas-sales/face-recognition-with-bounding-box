@@ -38,13 +38,13 @@ pip install torchvision --index-url https://download.pytorch.org/whl/cu118
 
 1. YOLOv8 détecte les personnes dans la webcam
 
-2. Chaque personne détectée est recadrée (person_crop)
+2. Chaque personne détectée est recadrée (face_crop)
 
-3. person_crop est temporairement enregistrée comme image (temp_face.jpg)
+3. face_crop est temporairement enregistrée comme image (temp_face.jpg)
 
 4. DeepFace recherche une correspondance dans img_real/ avec le modèle Facenet
 
 5. Si une correspondance est trouvée, le prénom est extrait et affiché
 
 6. Sinon, "Inconnu" ou "Non détecté" s'affiche
-"# face-recognition-with-bounding-box" 
+
