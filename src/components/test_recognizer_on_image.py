@@ -17,8 +17,3 @@ if img is None:
     raise FileNotFoundError("Image introuvable: {IMG}")
 
 print("Résultat:", rec.identify(img))
-
-
-#name = rec.identify(img)
-
-#print("Resultat:", name)

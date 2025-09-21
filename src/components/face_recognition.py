@@ -35,7 +35,7 @@ class Recognizer:
              img_path=self.temp_path,
              db_path=self.db_path,
              model_name=self.model_name,
-             enforce_detection=True,  # # lève si pas de visage
+             enforce_detection=False,  # True si detction de visage sinoin false
              silent=True) # pas de logs bruyants.
 
              # Retourne une liste de DataFrame (un par backend de détection). On utilise le premier.
