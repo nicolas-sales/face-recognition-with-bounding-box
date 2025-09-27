@@ -14,7 +14,7 @@ class FaceDetectionPipeline:
     def run_webcam(self, cam_idx: int = 0, margin: int = 10):
         cap = cv2.VideoCapture(cam_idx)
         if not cap.isOpened():
-            raise RuntimeError("Impossible d'ouvir la webcam")
+            raise RuntimeError("Impossible d'ouvrir la webcam")
         
         while True:
             ret, frame = cap.read()   # Lit une image (frame) depuis la webcam à chaque itération

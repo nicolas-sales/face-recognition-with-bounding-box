@@ -8,7 +8,7 @@ det = FaceDetector(model_path="yolov8n-face.pt", device=device, conf=0.25)
 
 cap = cv2.VideoCapture(0) # 0 = caméra par défaut
 if not cap.isOpened():
-    raise RuntimeError("Impossible d'ouvir la webcam")
+    raise RuntimeError("Impossible d'ouvrir la webcam")
 
 while True:
     ret, frame = cap.read()   # Lit une image (frame) depuis la webcam à chaque itération
