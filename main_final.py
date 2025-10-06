@@ -10,7 +10,7 @@ def main():
 
     # pipelines
     det = FaceDetectionPipeline(model_path = "yolov8n-face.pt", device = device, conf = 0.25)
-    rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8)
+    rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8, detector_backend="retinaface")
 
     # Webcam
     cam_idx=0

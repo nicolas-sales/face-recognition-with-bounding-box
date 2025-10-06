@@ -4,9 +4,10 @@ import cv2
 import numpy as np
 import torch
 from pathlib import Path
-from typing import List
-import os, uuid, glob, shutil
+from typing import List, Optional
+import os, uuid
 from deepface import DeepFace
+import re
 
 from src.pipeline.face_detection_pipeline import FaceDetectionPipeline
 from src.pipeline.face_recognition_pipeline import FaceRecognitionPipeline
@@ -18,10 +19,10 @@ app = FastAPI(title="Face Detection & Recognition API")
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 det = FaceDetectionPipeline(model_path = "yolov8n-face.pt", device = device, conf = 0.25)
-rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8)
+rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8, detector_backend="retinaface")
 
 DB_DIR = Path("img_real").resolve()
-DB_DIR.mkdir(parents=True, exist_ok=True)
+# DB_DIR.mkdir(parents=True, exist_ok=True)
 
 # Health
 
@@ -33,29 +34,34 @@ def health():
 # Upload vers img_real
 
 @app.post("/upload")
-async def upload_images(person: str = Form(...), files: List[UploadFile] = File(...), warmup : bool = True):  # # si True, on “réveille” DeepFace après upload (1 ligne)
-    person = person.strip()
-    if not person:
-        return JSONResponse({"error" : "person is required"}, status_code = 400)
-    
-    person_dir = DB_DIR / person
-    person_dir.mkdir(parents=True,exist_ok=True)
+async def upload_images(
+    person: str = Form(...),             # rendu obligatoire
+    files: List[UploadFile] = File(...),
+):
+    # normaliser le nom du dossier
+    raw = person.strip().lower()
+    clean = re.sub(r"\s+", "_", raw)
+    clean = re.sub(r"[^a-z0-9_]", "", clean)
+    if not clean or clean in {"string", "test"}:
+        return JSONResponse({"error": "Nom 'person' invalide."}, status_code=400)
+
+    person_dir = DB_DIR / clean
+    person_dir.mkdir(parents=True, exist_ok=True)
 
     saved = []
     for f in files:
-        # lecture et décodage
         data = await f.read()
         img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
         if img is None:
             return JSONResponse({"error": f"decode failed: {f.filename}"}, status_code=400)
-
-        # nom unique
-        ext = os.path.splitext(f.filename)[1].lower() or ".jpg"
-        out_path = person_dir / f"{uuid.uuid4().hex}{ext}"
+        ext = os.path.splitext(f.filename or "")[1].lower() or ".jpg"
+        out_path = person_dir / f"{uuid.uuid4().hex}{ext}"   # <— nom libre (UUID)
         cv2.imwrite(str(out_path), img)
-        saved.append(out_path.name)
+        saved.append(str(out_path.relative_to(DB_DIR)))
 
-    return {"person": person, "saved": saved, "count": len(saved)}
+    return {"saved": saved, "count": len(saved)}
+
+# Dans /docs, remplir toujours person (ex. nico) avant d’attacher les images. Les fichiers seront alors img_real/nico_<uuid>.jpg et DeepFace retournera bien "nico"
 
 # Infer
 
