@@ -48,3 +48,11 @@ pip install torchvision --index-url https://download.pytorch.org/whl/cu118
 
 6. Sinon, "Inconnu" ou "Non détecté" s'affiche
 
+
+## Lancement du serveur
+
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
+
+## URL host
+
+http://127.0.0.1:8000/docs

@@ -5,3 +5,7 @@ opencv-python
 jupyter
 ipykernel
 numpy
+pandas
+fastapi
+uvicorn[standard]
+python-multipart
