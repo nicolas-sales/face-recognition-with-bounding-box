@@ -66,7 +66,7 @@ async def upload_images(
 # Infer
 
 @app.post("/infer")
-async def infer(file: UploadFile = File(...), margin: int = 10): # la fonction est asynchrone (FastAPI/uvicorn peuvent gérer plusieurs requêtes en parallèle sans bloquer pendant les I/O).
+async def infer(file: UploadFile = File(...), margin: int = Form(10)): # la fonction est asynchrone (FastAPI/uvicorn peuvent gérer plusieurs requêtes en parallèle sans bloquer pendant les I/O).
     data = await file.read()  # Lit asynchroniquement le contenu binaire du fichier uploadé.
     img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)  # Convertit les bytes en np.ndarray de uint8, puis OpenCV décode cette image (BGR). Equivalent à cv2.imread, mais pour un buffer en mémoire (pas un fichier disque).
     if img is None:
