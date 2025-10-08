@@ -19,7 +19,7 @@ app = FastAPI(title="Face Detection & Recognition API")
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 det = FaceDetectionPipeline(model_path = "yolov8n-face.pt", device = device, conf = 0.25)
-rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8, detector_backend="retinaface")
+rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.9, detector_backend="skip") #"retinaface" plus robuste
 
 DB_DIR = Path("img_real").resolve()
 # DB_DIR.mkdir(parents=True, exist_ok=True)
@@ -61,7 +61,7 @@ async def upload_images(
 
     return {"saved": saved, "count": len(saved)}
 
-# Dans /docs, remplir toujours person (ex. nico) avant d’attacher les images. Les fichiers seront alors img_real/nico_<uuid>.jpg et DeepFace retournera bien "nico"
+# Dans /docs, remplir toujours person (ex. nico) avant d’attacher les images. Les fichiers seront alors img_real/nico/<uuid>.jpg et DeepFace retournera bien "nico"
 
 # Infer
 
@@ -82,7 +82,9 @@ async def infer(file: UploadFile = File(...), margin: int = 10): # la fonction e
         x2 = min(w, x2 + margin)
         y2 = min(h, y2 + margin)
         crop = img[y1:y2, x1:x2]
-        name = rec.identify_one(crop)
-        results.append({"box": [x1, y1, x2, y2], "name": name})
+        # name = rec.identify_one(crop)
+        name, dist = rec.identify_one_with_score(crop)
+        # results.append({"box": [x1, y1, x2, y2], "name": name})
+        name, dist = rec.identify_one_with_score(crop)
 
     return {"results": results}

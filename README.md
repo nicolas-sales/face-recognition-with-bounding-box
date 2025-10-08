@@ -56,3 +56,13 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ## URL host
 
 http://127.0.0.1:8000/docs
+
+
+# Pour le GPU
+
+pip uninstall -y torch torchvision torchaudio
+pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision torchaudio
+
+verification : 
+python -c "import torch; print('torch', torch.__version__, 'cuda_available', torch.cuda.is_available(), 'devices', torch.cuda.device_count())"
+

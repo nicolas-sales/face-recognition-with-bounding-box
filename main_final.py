@@ -10,7 +10,7 @@ def main():
 
     # pipelines
     det = FaceDetectionPipeline(model_path = "yolov8n-face.pt", device = device, conf = 0.25)
-    rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.8, detector_backend="retinaface")
+    rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.9, detector_backend="retinaface") # plus robuste
 
     # Webcam
     cam_idx=0
@@ -38,11 +38,19 @@ def main():
 
                 # crop_visage -> pipeline de reconnaissance
                 face_crop = frame[y1:y2, x1:x2]
-                name = rec.identify_one(face_crop)
+
+                if face_crop.size != 0:
+                     face_crop = cv2.resize(face_crop, (160, 160), interpolation=cv2.INTER_AREA)  # Normalisation du crop
+                # name = rec.identify_one(face_crop)
+                name, dist = rec.identify_one_with_score(face_crop)
 
                 # annotation
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.putText(frame, name, (x1, y1 - 10),
+                # cv2.putText(frame, name, (x1, y1 - 10),
+                            # cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
+
+                label = name if dist is None else f"{name} ({dist:.3f})"
+                cv2.putText(frame, label, (x1, max(0, y1 - 10)),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 255), 2)
                 
         cv2.imshow("Détection + reconnaissance",frame)

@@ -11,8 +11,8 @@ class Recognizer:
         db_path: str = "img_real",
         model_name: str = "Facenet",
         temp_dir: str = "tmp",
-        threshold: float = 0.7,  # plus petit = plus strict
-        detector_backend: str = "retinaface",  # plus robuste
+        threshold: float = 0.9,  # plus petit = plus strict
+        detector_backend: str = "retinaface" # plus robuste
     ):
         self.db_path = str(Path(db_path).resolve())
         self.model_name = model_name
@@ -52,7 +52,7 @@ class Recognizer:
                 return "Inconnu"
 
             df: pd.DataFrame = dfs[0]
-            if df is None or df.empty:
+            if df is None or df.empty or "distance" not in df.columns:
                 return "Inconnu"
 
             # trier par distance croissante
@@ -82,6 +82,47 @@ class Recognizer:
             return "Non détecté"
         finally:
             # nettoyage du fichier temporaire
+            try:
+                os.remove(tmp_path)
+            except Exception:
+                pass
+
+    def identify_with_score(self, face_crop):
+        """
+        Retourne (name: str, distance: float|None)
+        """
+        fd, tmp_path = tempfile.mkstemp(suffix=".jpg", dir=str(self.temp_dir))
+        os.close(fd)
+        try:
+            cv2.imwrite(tmp_path, face_crop)
+            dfs = DeepFace.find(
+                img_path=tmp_path,
+                db_path=self.db_path,
+                model_name=self.model_name,
+                detector_backend=self.detector_backend,
+                enforce_detection=False,
+                silent=True,
+            )
+            if not dfs or len(dfs) == 0:
+                return "Inconnu", None
+            df: pd.DataFrame = dfs[0]
+            if df is None or df.empty or "distance" not in df.columns:
+                return "Inconnu", None
+
+            df = df.sort_values("distance", ascending=True)
+            best = df.iloc[0]
+            dist = float(best["distance"])
+            if dist > self.threshold:
+                return "Inconnu", dist
+
+            identity_path = Path(best["identity"])
+            db_root_name = Path(self.db_path).resolve().name
+            parent = identity_path.parent.name
+            name = parent if parent.lower() != db_root_name.lower() else identity_path.stem.split("_")[0]
+            return name, dist
+        except Exception:
+            return "Non détecté", None
+        finally:
             try:
                 os.remove(tmp_path)
             except Exception:
