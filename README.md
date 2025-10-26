@@ -66,3 +66,11 @@ pip install --index-url https://download.pytorch.org/whl/cu121 torch torchvision
 verification : 
 python -c "import torch; print('torch', torch.__version__, 'cuda_available', torch.cuda.is_available(), 'devices', torch.cuda.device_count())"
 
+# Docker
+requirements-docker.txt pour ne pas téléchargé dans l'image des fichiers trop lourd comme cuda
+
+lancement:
+docker build -t face-app:latest .
+docker run -p 8000:8000 face-app:latest
+http://localhost:8000/docs
+
