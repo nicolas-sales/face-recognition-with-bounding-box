@@ -74,3 +74,11 @@ docker build -t face-app:latest .
 docker run -p 8000:8000 face-app:latest
 http://localhost:8000/docs
 
+# CI/CD GitHub Action
+Une fois le workflows validé dans GitHub action:
+docker login ghcr.io -u nicolas-sales
+password: ...
+Prendre l'image : docker pull ghcr.io/nicolas-sales/face-app:latest
+Lancer l'application : docker run -p 8000:8000 ghcr.io/nicolas-sales/face-app:latest
+http://localhost:8000/docs
+

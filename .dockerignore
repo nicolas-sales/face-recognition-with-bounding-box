@@ -15,13 +15,14 @@ logs/
 .checkpoints/
 .cache/
 
-# on ignore tous les poids par défaut
+# ignorer les poids en général
 *.pt
 *.pth
-# Sauf le modèle face dont on a besoin dans l'image Docker
+# ... mais garder le modèle visage embarqué dans l'image Docker
 !yolov8n-face.pt
 
 # git stuff
 .git
 .gitignore
+
 
