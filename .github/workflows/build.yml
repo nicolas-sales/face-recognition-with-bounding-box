@@ -16,12 +16,12 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ secrets.CR_USERNAME }} --password-stdin
 
-      - name: Build Docker Image
+      - name: Build Docker image
         run: |
           IMAGE_NAME=ghcr.io/${{ secrets.CR_USERNAME }}/face-app:latest
           docker build -t $IMAGE_NAME .
 
-      - name: Push Docker Image
+      - name: Push Docker image
         run: |
           IMAGE_NAME=ghcr.io/${{ secrets.CR_USERNAME }}/face-app:latest
           docker push $IMAGE_NAME
