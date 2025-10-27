@@ -11,7 +11,7 @@ class Recognizer:
         db_path: str = "img_real",
         model_name: str = "Facenet",
         temp_dir: str = "tmp",
-        threshold: float = 0.3,  # plus petit = plus strict
+        threshold: float = 0.4,  # plus petit = plus strict
         detector_backend: str = "retinaface" # plus robuste
     ):
         self.db_path = str(Path(db_path).resolve())

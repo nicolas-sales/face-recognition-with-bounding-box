@@ -3,7 +3,7 @@ import cv2
 from typing import List
 
 class FaceRecognitionPipeline:
-    def __init__(self, db_path: str = "img_real", model_name: str = "Facenet", threshold: float = 0.3, detector_backend: str = "retinaface"): # plus robuste
+    def __init__(self, db_path: str = "img_real", model_name: str = "Facenet", threshold: float = 0.4, detector_backend: str = "retinaface"): # plus robuste
         self.rec = Recognizer(db_path=db_path, model_name=model_name, threshold=threshold, detector_backend=detector_backend)
 
     def identify(self, crops: List) -> List[str]:
@@ -25,6 +25,6 @@ if __name__=="__main__":
     if img is None:
         raise FileNotFoundError("Image introuvable: {IMG}")
 
-    pipe = FaceRecognitionPipeline(db_path= "img_real", model_name= "Facenet", threshold= 0.7)
+    pipe = FaceRecognitionPipeline(db_path= "img_real", model_name= "Facenet", threshold= 0.4)
     name = pipe.identify_one(img)
     print("Résultat:", name)

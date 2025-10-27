@@ -1,0 +1,27 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrerts.CR_PAT }}" | docker login ghcr.io -u ${{ secrets.CR-USERNAME }} --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ secrets.CR_USERNAME }}/face-app:latest
+          docker build -t $IMAGE_NAME .
+
+      - name: Push Docker Image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ secrets.CR_USERNAME }}/face-app:latest
+          docker push $IMAGE_NAME

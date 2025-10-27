@@ -19,7 +19,7 @@ app = FastAPI(title="Face Detection & Recognition API")
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 det = FaceDetectionPipeline(model_path = "yolov8n-face.pt", device = device, conf = 0.25)
-rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.3, detector_backend="retinaface") # plus robuste
+rec = FaceRecognitionPipeline(db_path = "img_real", model_name = "Facenet", threshold = 0.4, detector_backend="retinaface") # plus robuste
 
 DB_DIR = Path("img_real").resolve()
 # DB_DIR.mkdir(parents=True, exist_ok=True)
